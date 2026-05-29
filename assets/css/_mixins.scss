@@ -1,0 +1,913 @@
+/*
+====================================================================
+	MIXINS LIBRARY
+====================================================================
+
+Este archivo contiene todos los mixins y funciones SCSS del tema.
+Organizados por categorías para facilitar su uso y mantenimiento.
+
+TABLA DE CONTENIDOS:
+	# SISTEMA DE FUENTES AUTOMATIZADO
+		# Funciones de conversión de unidades
+		# Funciones de procesamiento responsive
+		# Mixin principal para generar variables
+	# MIXINS DE LAYOUT
+		# Imágenes responsive 
+		# Espaciado responsive
+		# Utilidades de contenido
+	# MIXINS AUXILIARES (comentados para activar si se necesitan)
+
+====================================================================
+*/
+
+@use "sass:math";
+
+//==================================================================
+//	# SISTEMA DE COLORES AUTOMATIZADO 🎨
+//==================================================================
+
+/*
+	SISTEMA DE GESTIÓN DE COLORES SENCILLO
+	
+	Este sistema permite definir colores del tema de forma organizada:
+	- Nombres semánticos para los colores
+	- Valores hexadecimales + opacidad opcional
+	- Generación automática de variables CSS
+	
+	EJEMPLO DE USO:
+	$colors: (
+		"primary": #FF6B35,
+		"secondary": (#2A2622, 0.8),  // Con opacidad
+		"neutral-100": #FFFFFF
+	);
+	
+	@include generate-color-variables($colors);
+*/
+
+/**
+ * Genera variables CSS para colores del tema
+ * @param {Map} $colors - Mapa de colores (nombre: valor o nombre: (valor, opacidad))
+ * 
+ * EJEMPLOS:
+ * $colors: (
+ *   "primary": #FF6B35,                    // Color sólido
+ *   "secondary": (#2A2622, 0.8),          // Color con opacidad
+ *   "neutral-100": #FFFFFF                 // Color neutro
+ * );
+ * 
+ * GENERA:
+ * --mwm--color--primary: #FF6B35;
+ * --mwm--color--secondary: rgba(42, 38, 34, 0.8);
+ * --mwm--color--neutral-100: #FFFFFF;
+ */
+@mixin generate-color-variables($colors) {
+	@each $name, $value in $colors {
+		@if type-of($value) == list {
+			// Color con opacidad: ("primary": (#FF6B35, 0.8))
+			$color: nth($value, 1);
+			$opacity: nth($value, 2);
+
+			// Convertir hex a rgba
+			$red: red($color);
+			$green: green($color);
+			$blue: blue($color);
+
+			--mwm--color--#{$name}: rgba(
+				#{$red},
+				#{$green},
+				#{$blue},
+				#{$opacity}
+			);
+		} @else {
+			// Color sólido: ("primary": #FF6B35)
+			--mwm--color--#{$name}: #{$value};
+		}
+	}
+}
+
+//==================================================================
+//	# SISTEMA DE TIPOGRAFÍAS AUTOMATIZADO ✍️
+//==================================================================
+
+/**
+ * Genera variables CSS para familias tipográficas
+ * @param {Map} $font-families - Configuración de familias tipográficas
+ * 
+ * EJEMPLO:
+ * $font-families: (
+ *   "main": ("Nunito", sans-serif),
+ *   "alt": ("Georgia", serif),
+ *   "mono": ("Courier New", monospace)
+ * );
+ * 
+ * GENERA:
+ * --mwm--font-family--main: "Nunito", sans-serif;
+ * --mwm--font-family--alt: "Georgia", serif;
+ * --mwm--font-family--mono: "Courier New", monospace;
+ */
+@mixin generate-font-families($font-families) {
+	@each $name, $family in $font-families {
+		--mwm--font-family--#{$name}: #{$family};
+	}
+}
+
+/**
+ * Genera variables CSS para pesos tipográficos
+ * @param {Map} $font-weights - Configuración de pesos tipográficos
+ * 
+ * EJEMPLO:
+ * $font-weights: (
+ *   "light": 300,
+ *   "regular": 400,
+ *   "semibold": 600,
+ *   "bold": 700
+ * );
+ * 
+ * GENERA:
+ * --mwm--font-weight--light: 300;
+ * --mwm--font-weight--regular: 400;
+ * --mwm--font-weight--semibold: 600;
+ * --mwm--font-weight--bold: 700;
+ */
+@mixin generate-font-weights($font-weights) {
+	@each $name, $weight in $font-weights {
+		--mwm--font-weight--#{$name}: #{$weight};
+	}
+}
+
+//==================================================================
+//	# SISTEMA DE FUENTES AUTOMATIZADO 🚀
+//==================================================================
+
+/*
+	MIXIN PARA GENERAR CLASES DE TIPOGRAFÍA AUTOMÁTICAMENTE
+	
+	Genera todas las clases .is-style-{nombre} y .has-{nombre}-font-size
+	basándose en la configuración de $mwm-font-types, eliminando repetición manual.
+*/
+
+/**
+ * Genera clases de tipografía automáticamente
+ * @param {Map} $font-types - Configuración completa de tipos de fuente
+ * @param {Map} $html-mappings - Mapeo de elementos HTML a tipos de fuente (opcional)
+ * 
+ * EJEMPLO DE $font-types:
+ * $font-types: (
+ *   "d100": (
+ *     "font-size": (40px, 50px, 80px),
+ *     "line-height": (40px, 50px, 70px),
+ *     "letter-spacing": (0.4px),
+ *     "weight": light,
+ *     "family": alt,
+ *     "transform": none
+ *   ),
+ *   "h100": (
+ *     "font-size": (24px, 28px, 32px),
+ *     "weight": semibold
+ *   )
+ * );
+ * 
+ * PROPIEDADES DISPONIBLES:
+ * - font-size, line-height, letter-spacing: valores responsive (móvil, md, xl)
+ * - weight: light, regular, semibold, bold (usa --mwm--font-weight--{peso})
+ * - family: main, alt, mono, etc. (usa --mwm--font-family--{nombre})
+ * - transform: uppercase, lowercase, capitalize, none
+ * 
+ * EJEMPLO DE $html-mappings:
+ * $html-mappings: (
+ *   "h1": "h100",
+ *   "h2": "h200"
+ * );
+ * 
+ * GENERA AUTOMÁTICAMENTE:
+ * .is-style-d100, .has-d-100-font-size { font-family, font-size, font-weight, etc. }
+ * h1 { @extend .is-style-h100; }
+ */
+@mixin generate-typography-classes($font-types, $html-mappings: ()) {
+	@each $type, $properties in $font-types {
+		// Extraer propiedades de estilo directamente del tipo de fuente
+		$font-weight: map-get($properties, "weight");
+		$font-family: map-get($properties, "family");
+		$text-transform: map-get($properties, "transform");
+
+		// Generar clases para este tipo
+		.is-style-#{$type},
+		.has-#{$type}-font-size {
+			// Font family (por defecto usa main, configurable a cualquier familia)
+			@if $font-family {
+				font-family: var(--mwm--font-family--#{$font-family});
+			} @else {
+				font-family: var(--mwm--font-family--main);
+			}
+
+			font-size: var(--mwm--font-size--#{$type});
+			line-height: var(--mwm--line-height--#{$type});
+
+			@if $font-weight {
+				font-weight: var(--mwm--font-weight--#{$font-weight});
+			}
+
+			@if map-has-key($properties, "letter-spacing") {
+				letter-spacing: var(--mwm--letter-spacing--#{$type});
+			}
+
+			@if $text-transform {
+				text-transform: #{$text-transform};
+			}
+		}
+	}
+
+	// Asignación configurable de elementos HTML a clases
+	@each $html-element, $font-type in $html-mappings {
+		#{$html-element} {
+			@extend .is-style-#{$font-type} !optional;
+		}
+	}
+}
+
+/*
+	SISTEMA DE GESTIÓN DE FUENTES INTELIGENTE
+	
+	Este sistema permite definir fuentes responsive de forma súper sencilla:
+	- Conversiones automáticas de px → rem, px → em, px → %
+	- Sintaxis simplificada sin media queries manuales
+	- Line-height inteligente basado en font-size
+	- Un solo valor aplica a todas las resoluciones
+	- Uso de null para heredar valores anteriores
+	
+	EJEMPLO DE USO:
+	$font-types: (
+		"titulo": (
+			"font-size": (18px, 22px, 28px),
+			"line-height": (27px, 33px, 42px),  // Conversión automática a %
+			"letter-spacing": (1px, 2px)
+		)
+	);
+	
+	@include generate-font-variables($breakpoints, $font-types);
+*/
+
+// ===================================
+// # Funciones de conversión de unidades
+// ===================================
+
+/**
+ * Convierte valores px a rem
+ * @param {Number} $px-value - Valor en px a convertir
+ * @return {Number} - Valor convertido a rem (base 16px)
+ * 
+ * Ejemplo: px-to-rem(24px) → 1.5rem
+ */
+@function px-to-rem($px-value) {
+	@if type-of($px-value) == number {
+		@if unit($px-value) == px {
+			@return math.div($px-value, 16px) * 1rem;
+		} @else {
+			@return $px-value;
+		}
+	}
+	@return $px-value;
+}
+
+/**
+ * Convierte valores px a em
+ * @param {Number} $px-value - Valor en px a convertir
+ * @param {Number} $context - Contexto base para la conversión (por defecto 16px)
+ * @return {Number} - Valor convertido a em
+ * 
+ * Ejemplo: px-to-em(8px) → 0.5em
+ */
+@function px-to-em($px-value, $context: 16px) {
+	@if type-of($px-value) == number {
+		@if unit($px-value) == px {
+			@return math.div($px-value, $context) * 1em;
+		} @else {
+			@return $px-value;
+		}
+	}
+	@return $px-value;
+}
+
+/**
+ * Normaliza line-height a formato decimal basándose en font-size
+ * Esta es la funcionalidad INTELIGENTE que calcula decimal automáticamente
+ * @param {Number} $value - Valor de line-height (px, %, decimal)
+ * @param {Number} $font-size - Font-size de contexto para el cálculo
+ * @return {Number} - Decimal calculado (sin unidad)
+ * 
+ * Ejemplo: normalize-line-height(24px, 16px) → 1.5
+ */
+@function normalize-line-height($value, $font-size: 16px) {
+	@if type-of($value) == number {
+		@if unit($value) == px {
+			// MAGIA: Convertir px a decimal basado en el font-size
+			$font-size-px: $font-size;
+			@if unit($font-size) == rem {
+				$font-size-px: math.div($font-size * 16px, 1rem);
+			}
+			@return math.div($value, $font-size-px);
+		} @else if unit($value) == "%" {
+			// Convertir porcentaje a decimal
+			@return math.div($value, 100%);
+		} @else {
+			// Valor sin unidad (decimal), mantenerlo
+			@return $value;
+		}
+	}
+	@return $value;
+}
+
+// ===================================
+// # Funciones de procesamiento responsive
+// ===================================
+
+/**
+ * Procesa valores de fuente aplicando conversiones automáticas
+ * @param {Any} $value - Valor a procesar
+ * @param {String} $property - Tipo de propiedad (font-size, line-height, letter-spacing)
+ * @param {Number} $font-size - Contexto de font-size para line-height
+ * @return {Any} - Valor procesado con las conversiones aplicadas
+ */
+@function process-font-value($value, $property, $font-size: 16px) {
+	@if $value == "" or $value == null {
+		@return null;
+	}
+
+	@if $property == "font-size" {
+		@return px-to-rem($value);
+	} @else if $property == "line-height" {
+		@return normalize-line-height($value, $font-size);
+	} @else if $property == "letter-spacing" {
+		@return px-to-em($value);
+	}
+
+	@return $value;
+}
+
+/**
+ * Obtiene valor responsive en índice específico o hereda el anterior
+ * @param {List} $values - Lista de valores responsive
+ * @param {Number} $index - Índice del breakpoint (1=mobile, 2=md, 3=xl, etc.)
+ * @return {Any} - Valor para ese breakpoint o heredado
+ * 
+ * Lógica:
+ * - Si solo hay 1 valor, se usa para todos los breakpoints
+ * - Si hay null, hereda el valor anterior válido
+ * - Si hay valor específico, lo usa
+ */
+@function get-responsive-value($values, $index) {
+	$length: length($values);
+
+	// Si solo hay un valor, usarlo para todos los breakpoints
+	@if $length == 1 {
+		@return nth($values, 1);
+	}
+
+	// Si el índice existe y no está vacío, usarlo
+	@if $index <= $length {
+		$value: nth($values, $index);
+		@if $value != "" and $value != null {
+			@return $value;
+		}
+	}
+
+	// Si no hay valor para este índice, buscar el último valor válido
+	@for $i from $index - 1 through 1 {
+		@if $i <= $length {
+			$fallback: nth($values, $i);
+			@if $fallback != "" and $fallback != null {
+				@return $fallback;
+			}
+		}
+	}
+
+	@return null;
+}
+
+// ===================================
+// # Mixin principal para generar variables
+// ===================================
+
+/**
+ * MIXIN PRINCIPAL: Genera todas las variables CSS de fuentes con breakpoints
+ * @param {Map} $breakpoints - Mapa de breakpoints (nombre: valor)
+ * @param {Map} $font-types - Mapa de tipos de fuente con sus propiedades
+ * 
+ * ESTO ES EL CORAZÓN DEL SISTEMA 💝
+ * 
+ * Ejemplo de uso:
+ * $breakpoints: ("md": 768px, "xl": 1200px);
+ * $fonts: (
+ *   "titulo": (
+ *     "font-size": (18px, 24px, 32px),
+ *     "line-height": (27px, 36px, 48px)
+ *   )
+ * );
+ * @include generate-font-variables($breakpoints, $fonts);
+ */
+@mixin generate-font-variables($breakpoints, $font-types) {
+	// Generar variables base (mobile first)
+	@each $type, $properties in $font-types {
+		// Obtener font-size para este tipo como contexto para line-height
+		$font-size-values: map-get($properties, "font-size");
+		$base-font-size: 16px; // Valor por defecto
+		@if $font-size-values {
+			$base-font-size-raw: get-responsive-value($font-size-values, 1);
+			@if $base-font-size-raw != null {
+				$base-font-size: $base-font-size-raw;
+			}
+		}
+
+		@each $property, $values in $properties {
+			$base-value: get-responsive-value($values, 1);
+			@if $base-value != null {
+				$processed-value: process-font-value(
+					$base-value,
+					$property,
+					$base-font-size
+				);
+				@if $processed-value != null {
+					--mwm--#{$property}--#{$type}: #{$processed-value};
+				}
+			}
+		}
+	}
+
+	// Generar variables para cada breakpoint
+	$breakpoint-index: 2; // Empezar desde el segundo valor (el primero es mobile)
+	@each $breakpoint-name, $breakpoint-value in $breakpoints {
+		$has-changes: false;
+
+		// Verificar si hay cambios para este breakpoint
+		@each $type, $properties in $font-types {
+			@each $property, $values in $properties {
+				$responsive-value: get-responsive-value(
+					$values,
+					$breakpoint-index
+				);
+				@if $responsive-value != null {
+					// Obtener font-size para contexto
+					$font-size-values: map-get($properties, "font-size");
+					$context-font-size: 16px;
+					@if $font-size-values {
+						$context-font-size-raw: get-responsive-value(
+							$font-size-values,
+							$breakpoint-index
+						);
+						@if $context-font-size-raw != null {
+							$context-font-size: $context-font-size-raw;
+						}
+					}
+
+					$processed-value: process-font-value(
+						$responsive-value,
+						$property,
+						$context-font-size
+					);
+					@if $processed-value != null {
+						$has-changes: true;
+					}
+				}
+			}
+		}
+
+		@if $has-changes {
+			@media (min-width: #{$breakpoint-value}) {
+				@each $type, $properties in $font-types {
+					// Obtener font-size para contexto en este breakpoint
+					$font-size-values: map-get($properties, "font-size");
+					$context-font-size: 16px;
+					@if $font-size-values {
+						$context-font-size-raw: get-responsive-value(
+							$font-size-values,
+							$breakpoint-index
+						);
+						@if $context-font-size-raw != null {
+							$context-font-size: $context-font-size-raw;
+						}
+					}
+
+					@each $property, $values in $properties {
+						$responsive-value: get-responsive-value(
+							$values,
+							$breakpoint-index
+						);
+						@if $responsive-value != null {
+							$processed-value: process-font-value(
+								$responsive-value,
+								$property,
+								$context-font-size
+							);
+							@if $processed-value != null {
+								--mwm--#{$property}--#{$type}: #{$processed-value};
+							}
+						}
+					}
+				}
+			}
+		}
+
+		$breakpoint-index: $breakpoint-index + 1;
+	}
+}
+
+//==================================================================
+//	# SISTEMA DE MAX-WIDTH AUTOMATIZADO 📏
+//==================================================================
+
+/*
+	SISTEMA DE GESTIÓN DE MAX-WIDTH RESPONSIVE
+	
+	Este sistema permite definir contenedores responsive de forma organizada:
+	- Nombres semánticos para los contenedores
+	- Valores responsive con breakpoints
+	- Generación automática de clases CSS
+	- Herencia automática para clases de WordPress
+	
+	EJEMPLO DE USO:
+	$max-widths: (
+		"1": (1200px, 1400px, 1600px),  // .mwm-max-1
+		"2": (800px, 1000px, 1200px),   // .mwm-max-2
+		"narrow": (600px)               // .mwm-max-narrow
+	);
+	
+	@include generate-max-width-classes($breakpoints, $max-widths);
+*/
+
+/**
+ * Genera clases de max-width responsive con padding controlable
+ * @param {Map} $breakpoints - Breakpoints para responsive
+ * @param {Map} $max-widths - Mapa de contenedores con width y padding responsive
+ * @param {Number} $default-padding - Padding por defecto si no se especifica (opcional, 1.25rem)
+ * 
+ * SINTAXIS SIMPLE (solo width):
+ * $max-widths: (
+ *   "1": (1200px, 1400px, 1600px),     // Width responsive, padding por defecto
+ *   "narrow": (600px)                  // Width fijo, padding por defecto
+ * );
+ * 
+ * SINTAXIS AVANZADA (width + padding):
+ * $max-widths: (
+ *   "1": (
+ *     "width": (1200px, 1400px, 1600px),
+ *     "padding": (1.25rem, 2rem, 2.5rem)    // Padding responsive
+ *   ),
+ *   "2": (
+ *     "width": (800px, 1000px),
+ *     "padding": (1rem)                      // Padding fijo
+ *   )
+ * );
+ * 
+ * GENERA:
+ * .mwm-max-1 { max-width: calc(1200px + 1.25rem * 2); padding: 0 1.25rem; }
+ * @media (min-width: 1280px) { .mwm-max-1 { max-width: calc(1400px + 2rem * 2); padding: 0 2rem; } }
+ */
+@mixin generate-max-width-classes(
+	$breakpoints,
+	$max-widths,
+	$default-padding: 1.25rem
+) {
+	// Breakpoints por defecto
+	$default-breakpoints: (
+		"md": 1280px,
+		"xl": 1600px,
+	);
+	$used-breakpoints: if(
+		$breakpoints != null,
+		$breakpoints,
+		$default-breakpoints
+	);
+
+	// Generar variable CSS principal (sin número) en :root
+	:root {
+		--mwm--max-padding: #{$default-padding};
+	}
+
+	@each $name, $config in $max-widths {
+		// Detectar sintaxis: simple (lista/valor) vs avanzada (mapa)
+		$is-advanced: type-of($config) == map and map-has-key($config, "width");
+
+		// Extraer width y padding según sintaxis
+		$width-values: null;
+		$padding-values: null;
+
+		@if $is-advanced {
+			// SINTAXIS AVANZADA: ("1": ("width": (...), "padding": (...)))
+			$width-values: map-get($config, "width");
+			$padding-values: map-get($config, "padding");
+			@if $padding-values == null {
+				$padding-values: $default-padding;
+			}
+		} @else {
+			// SINTAXIS SIMPLE: ("1": (...))
+			$width-values: $config;
+			$padding-values: $default-padding;
+		}
+
+		// Generar clase base .mwm-max-{name}
+		.mwm-max-#{$name} {
+			margin-left: auto;
+			margin-right: auto;
+
+			// Calcular padding base (móvil)
+			$base-padding: null;
+			@if type-of($padding-values) == list {
+				$base-padding: nth($padding-values, 1);
+			} @else {
+				$base-padding: $padding-values;
+			}
+
+			// Generar variable CSS específica para este contenedor
+			--mwm--max-padding-#{$name}: #{$base-padding};
+
+			// Valor base (móvil)
+			@if type-of($width-values) == list {
+				$base-width: nth($width-values, 1);
+				max-width: calc(
+					#{$base-width} +
+						var(--mwm--max-padding-#{$name}, var(--mwm--max-padding)) *
+						2
+				);
+			} @else {
+				max-width: calc(
+					#{$width-values} +
+						var(--mwm--max-padding-#{$name}, var(--mwm--max-padding)) *
+						2
+				);
+			}
+
+			// Padding base (móvil)
+			padding-left: var(--mwm--max-padding-#{$name}, var(--mwm--max-padding));
+			padding-right: var(--mwm--max-padding-#{$name}, var(--mwm--max-padding));
+		}
+
+		// Generar valores responsive
+		@if type-of($width-values) == list and length($width-values) > 1 {
+			$value-index: 2;
+			@each $breakpoint-name, $breakpoint-value in $used-breakpoints {
+				@if length($width-values) >= $value-index {
+					$responsive-width: nth($width-values, $value-index);
+
+					// Calcular padding responsive
+					$responsive-padding: null;
+					@if type-of($padding-values) ==
+						list and
+						length($padding-values) >=
+						$value-index
+					{
+						$responsive-padding: nth($padding-values, $value-index);
+					} @else if type-of($padding-values) == list {
+						// Si no hay suficientes valores de padding, usar el último disponible
+						$responsive-padding: nth(
+							$padding-values,
+							length($padding-values)
+						);
+					} @else {
+						$responsive-padding: $padding-values;
+					}
+
+					@media (min-width: #{$breakpoint-value}) {
+						.mwm-max-#{$name} {
+							--mwm--max-padding-#{$name}: #{$responsive-padding};
+							max-width: calc(
+								#{$responsive-width} +
+									var(--mwm--max-padding-#{$name}, var(--mwm--max-padding)) *
+									2
+							);
+							padding-left: var(--mwm--max-padding-#{$name}, var(--mwm--max-padding));
+							padding-right: var(--mwm--max-padding-#{$name}, var(--mwm--max-padding));
+						}
+					}
+				}
+				$value-index: $value-index + 1;
+			}
+		}
+	}
+
+	// Hacer que WordPress classes hereden de .mwm-max-1 si existe
+	@if map-has-key($max-widths, "1") {
+		.wp-block-group:not(.alignfull) .wp-block-group__inner-container {
+			@extend .mwm-max-1;
+		}
+	}
+}
+
+//==================================================================
+//	# MIXINS DE LAYOUT 📐
+//==================================================================
+
+// ===================================
+// # Imágenes responsive
+// ===================================
+
+/**
+ * Crea un contenedor para imágenes/videos responsive con aspect ratio
+ * @param {Number} $width - Ancho de referencia
+ * @param {Number} $height - Alto de referencia
+ * 
+ * Ejemplo: @include responsiveImg(16, 9); // Para ratio 16:9
+ * 
+ * Genera un contenedor que mantiene el aspect ratio y hace que img/video
+ * ocupen todo el espacio con object-fit: cover
+ */
+@mixin responsiveImg($width, $height) {
+	overflow: hidden;
+	padding-bottom: calc($height / $width * 100%);
+	position: relative;
+
+	img,
+	video {
+		height: 100%;
+		left: 0;
+		object-fit: cover;
+		position: absolute;
+		top: 0;
+		width: 100%;
+	}
+}
+
+// ===================================
+// # Espaciado responsive
+// ===================================
+
+/**
+ * Genera espaciado responsive con breakpoints personalizables
+ * @param {String} $type - Tipo de espaciado (margin, padding)
+ * @param {List} $values - Lista de valores responsive [mobile, md, xl, ...]
+ * @param {String} $position - Posición (top, bottom, both) - por defecto: bottom
+ * @param {Map} $breakpoints - Breakpoints personalizados (opcional, usa por defecto 768px, 1280px)
+ * 
+ * EJEMPLOS DE USO:
+ * @include spaceForBlocks(margin, (1rem, 2rem, 3rem));                    // Básico
+ * @include spaceForBlocks(padding, (1rem, 2rem, 3rem), both);             // Con posición
+ * @include spaceForBlocks(margin, (1rem, 2rem), top, $custom-breakpoints); // Con breakpoints custom
+ * 
+ * COMPATIBILIDAD LEGACY: Para mantener compatibilidad con código existente
+ * También acepta: @include spaceForBlocks(margin, 1rem, 2rem, 3rem, both);
+ */
+@mixin spaceForBlocks(
+	$type,
+	$base,
+	$md: null,
+	$xl: null,
+	$position: bottom,
+	$breakpoints: null
+) {
+	// Breakpoints por defecto
+	$default-breakpoints: (
+		"md": 1024px,
+		"xl": 1400px,
+	);
+	$used-breakpoints: if(
+		$breakpoints != null,
+		$breakpoints,
+		$default-breakpoints
+	);
+
+	// Detectar si es sintaxis nueva (lista de valores)
+	@if type-of($base) == list {
+		// SINTAXIS NUEVA: spaceForBlocks(margin, (1rem, 2rem, 3rem), both, $breakpoints)
+		$values: $base;
+		$position: if($md != null, $md, bottom);
+		$used-breakpoints: if($xl != null, $xl, $used-breakpoints);
+
+		// Aplicar valor base (mobile)
+		$base-value: nth($values, 1);
+		@if $position == bottom or $position == both {
+			#{$type}-bottom: #{$base-value};
+		}
+		@if $position == top or $position == both {
+			#{$type}-top: #{$base-value};
+		}
+
+		// Aplicar valores responsive
+		$value-index: 2;
+		@each $breakpoint-name, $breakpoint-value in $used-breakpoints {
+			@if length($values) >= $value-index {
+				$responsive-value: nth($values, $value-index);
+
+				@media (min-width: #{$breakpoint-value}) {
+					@if $position == bottom or $position == both {
+						#{$type}-bottom: #{$responsive-value};
+					}
+					@if $position == top or $position == both {
+						#{$type}-top: #{$responsive-value};
+					}
+				}
+			}
+			$value-index: $value-index + 1;
+		}
+	} @else {
+		// SINTAXIS LEGACY: spaceForBlocks(margin, 1rem, 2rem, 3rem, both)
+		// Aplicar valor base (mobile)
+		@if $position == bottom or $position == both {
+			#{$type}-bottom: #{$base};
+		}
+		@if $position == top or $position == both {
+			#{$type}-top: #{$base};
+		}
+
+		// Aplicar breakpoints con valores hardcodeados para compatibilidad
+		@if $md != null {
+			@media (min-width: 1024px) {
+				@if $position == bottom or $position == both {
+					#{$type}-bottom: #{$md};
+				}
+				@if $position == top or $position == both {
+					#{$type}-top: #{$md};
+				}
+			}
+		}
+
+		@if $xl != null {
+			@media (min-width: 1400px) {
+				@if $position == bottom or $position == both {
+					#{$type}-bottom: #{$xl};
+				}
+				@if $position == top or $position == both {
+					#{$type}-top: #{$xl};
+				}
+			}
+		}
+	}
+}
+
+// ===================================
+// # Utilidades de contenido
+// ===================================
+
+/**
+ * Elimina el margin-bottom del último elemento hijo
+ * 
+ * Ejemplo: @include lastChildMarginZero();
+ * 
+ * Muy útil para contenedores de texto donde no quieres espacio
+ * al final del último párrafo o elemento
+ */
+@mixin lastChildMarginZero() {
+	> *:last-child {
+		margin-bottom: 0;
+	}
+}
+
+//==================================================================
+//	# MIXINS AUXILIARES (Activar si se necesitan) 🛠️
+//==================================================================
+
+/*
+	Estos mixins están comentados pero se pueden activar fácilmente.
+	Descomenta los que necesites para tu proyecto.
+*/
+
+/**
+ * Flexbox con configuración común
+ * @include flex(); // align-items: center, display: flex, justify-content: space-between
+ */
+// @mixin flex {
+// 	align-items: center;
+// 	display: flex;
+// 	justify-content: space-between;
+// }
+
+/**
+ * Grid responsive con columnas automáticas
+ * @param {Number} $columns - Número de columnas
+ * @param {Number} $space - Espacio entre elementos
+ * 
+ * Ejemplo: @include grid(3, 1rem); // 3 columnas con gap de 1rem
+ */
+// @mixin grid($columns, $space) {
+// 	display: grid;
+// 	gap: $space;
+// 	grid-template-columns: repeat($columns, 1fr);
+// }
+
+/**
+ * Centrado absoluto (horizontal y vertical)
+ */
+// @mixin center-absolute {
+// 	position: absolute;
+// 	top: 50%;
+// 	left: 50%;
+// 	transform: translate(-50%, -50%);
+// }
+
+/**
+ * Truncar texto con ellipsis
+ */
+// @mixin text-ellipsis {
+// 	overflow: hidden;
+// 	text-overflow: ellipsis;
+// 	white-space: nowrap;
+// }
+
+/**
+ * Clearfix para elementos flotantes
+ */
+// @mixin clearfix {
+// 	&::after {
+// 		content: "";
+// 		display: table;
+// 		clear: both;
+// 	}
+// }

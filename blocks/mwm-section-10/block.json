@@ -1,0 +1,30 @@
+{
+	"apiVersion": 3,
+	"name": "acf/mwm-section-10",
+	"title": "MWM Section 10",
+	"description": "Grupo de hasta 3 cards numeradas con icono, título, descripción y lista opcional",
+	"category": "bilky-blocks",
+	"icon": "grid-view",
+	"keywords": [
+		"section",
+		"cards",
+		"grid",
+		"numbered"
+	],
+	"supports": {
+		"align": false,
+		"jsx": false
+	},
+	"acf": {
+		"renderTemplate": "blocks/mwm-section-10/template.php",
+		"blockVersion": 3
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"data": {
+				"is_preview": true
+			}
+		}
+	}
+}

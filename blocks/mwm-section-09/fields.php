@@ -1,0 +1,162 @@
+<?php
+
+if ( function_exists( 'acf_add_local_field_group' ) ) :
+
+	acf_add_local_field_group(
+		array(
+			'key'                   => 'group_mwm_section_09',
+			'title'                 => __( 'MWM Section 09', 'bilky' ),
+			'fields'                => array(
+				array(
+					'key'               => 'field_mwm_section_09_text_color',
+					'label'             => __( 'Color del texto', 'bilky' ),
+					'name'              => 'text_color',
+					'type'              => 'select',
+					'instructions'      => __( 'Selecciona el color del texto principal (título y descripción).', 'bilky' ),
+					'required'          => 0,
+					'choices'           => array(
+						'blue'  => __( 'Azul', 'bilky' ),
+						'white' => __( 'Blanco', 'bilky' ),
+					),
+					'default_value'     => 'blue',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'ui'                => 1,
+					'ajax'              => 0,
+					'return_format'     => 'value',
+				),
+				array(
+					'key'               => 'field_mwm_section_09_card_background',
+					'label'             => __( 'Fondo de las cards', 'bilky' ),
+					'name'              => 'card_background',
+					'type'              => 'select',
+					'instructions'      => __( 'Selecciona el fondo de las cards.', 'bilky' ),
+					'required'          => 0,
+					'choices'           => array(
+						'white'      => __( 'Blanco', 'bilky' ),
+						'transparent' => __( 'Transparente', 'bilky' ),
+						'grey'       => __( 'Gris', 'bilky' ),
+					),
+					'default_value'     => 'white',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'ui'                => 1,
+					'ajax'              => 0,
+					'return_format'     => 'value',
+				),
+				array(
+						'key'               => 'field_mwm_section_09_breadcrumb_button_text',
+						'label'             => __( 'Texto del breadcrumb', 'bilky' ),
+						'name'              => 'breadcrumb_button_text',
+						'type'              => 'text',
+						'instructions'      => __( 'Texto del breadcrumb', 'bilky' ),
+						'required'          => 0,
+				),
+				array(
+					'key'               => 'field_mwm_section_09_title',
+					'label'             => __( 'Título', 'bilky' ),
+					'name'              => 'title',
+					'type'              => 'textarea',
+					'instructions'      => __( 'Título principal (se puede dividir en líneas)', 'bilky' ),
+					'required'          => 0,
+					'rows'              => 3,
+				),
+				array(
+					'key'               => 'field_mwm_section_09_rows',
+					'label'             => __( 'Filas de cards', 'bilky' ),
+					'name'              => 'rows',
+					'type'              => 'repeater',
+					'instructions'      => __( 'Añade filas de cards. Cada fila puede tener entre 1 y 4 cards.', 'bilky' ),
+					'required'          => 0,
+					'conditional_logic' => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'collapsed'          => 'field_mwm_section_09_row_cards',
+					'min'                => 1,
+					'max'                => 0,
+					'layout'             => 'block',
+					'button_label'       => __( 'Añadir Fila', 'bilky' ),
+					'sub_fields'         => array(
+						array(
+							'key'               => 'field_mwm_section_09_row_cards',
+							'label'             => __( 'Cards', 'bilky' ),
+							'name'              => 'cards',
+							'type'              => 'repeater',
+							'instructions'      => __( 'Añade las cards de esta fila (máximo 4)', 'bilky' ),
+							'required'          => 0,
+							'conditional_logic' => 0,
+							'wrapper'           => array(
+								'width' => '',
+								'class' => '',
+								'id'    => '',
+							),
+							'collapsed'          => 'field_mwm_section_09_row_card_title',
+							'min'                => 1,
+							'max'                => 4,
+							'layout'             => 'block',
+							'button_label'       => __( 'Añadir Card', 'bilky' ),
+							'sub_fields'         => array(
+								array(
+									'key'               => 'field_mwm_section_09_row_card_icon',
+									'label'             => __( 'Icono', 'bilky' ),
+									'name'              => 'icon',
+									'type'              => 'text',
+									'instructions'      => __( 'Nombre del icono de Font Awesome 7 Pro (ej: briefcase, user, etc.)', 'bilky' ),
+									'required'          => 0,
+									'default_value'     => 'briefcase',
+									'placeholder'       => 'briefcase',
+								),
+								array(
+									'key'               => 'field_mwm_section_09_row_card_title',
+									'label'             => __( 'Título', 'bilky' ),
+									'name'              => 'title',
+									'type'              => 'text',
+									'instructions'      => __( 'Título de la card', 'bilky' ),
+									'required'          => 0,
+								),
+								array(
+									'key'               => 'field_mwm_section_09_row_card_subtitle',
+									'label'             => __( 'Texto bajo el título', 'bilky' ),
+									'name'              => 'subtitle',
+									'type'              => 'text',
+									'instructions'      => __( 'Opcional. Por ejemplo un precio (10 € / mes), una sola palabra o cualquier texto corto.', 'bilky' ),
+									'required'          => 0,
+									'placeholder'       => __( '10 € / mes', 'bilky' ),
+								),
+								array(
+									'key'               => 'field_mwm_section_09_row_card_description',
+									'label'             => __( 'Descripción', 'bilky' ),
+									'name'              => 'description',
+									'type'              => 'textarea',
+									'instructions'      => __( 'Descripción de la card', 'bilky' ),
+									'required'          => 0,
+									'rows'              => 3,
+								),
+							),
+						),
+					),
+				),
+			),
+			'location'              => array(
+				array(
+					array(
+						'param'    => 'block',
+						'operator' => '==',
+						'value'    => 'acf/mwm-section-09',
+					),
+				),
+			),
+			'menu_order'            => 0,
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'top',
+			'instruction_placement' => 'label',
+			'hide_on_screen'        => '',
+		)
+	);
+
+endif;
+

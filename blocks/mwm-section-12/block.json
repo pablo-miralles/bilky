@@ -1,0 +1,30 @@
+{
+	"apiVersion": 3,
+	"name": "acf/mwm-section-12",
+	"title": "MWM Section 12",
+	"description": "Sección de logos de clientes/partners con sección de testimonial opcional",
+	"category": "bilky-blocks",
+	"icon": "images-alt2",
+	"keywords": [
+		"section",
+		"partners",
+		"clients",
+		"logos"
+	],
+	"supports": {
+		"align": false,
+		"jsx": false
+	},
+	"acf": {
+		"renderTemplate": "blocks/mwm-section-12/template.php",
+		"blockVersion": 3
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"data": {
+				"is_preview": true
+			}
+		}
+	}
+}

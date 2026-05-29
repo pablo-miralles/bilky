@@ -1,0 +1,31 @@
+{
+	"apiVersion": 3,
+	"name": "acf/mwm-card-03-group",
+	"title": "MWM Card 03 Group",
+	"description": "Grupo de cards numeradas con icono, título y descripción usando Swiper",
+	"category": "bilky-blocks",
+	"icon": "slides",
+	"keywords": [
+		"cards",
+		"slider",
+		"swiper",
+		"carousel",
+		"numbered"
+	],
+	"supports": {
+		"align": false,
+		"jsx": false
+	},
+	"acf": {
+		"renderTemplate": "blocks/mwm-card-03-group/template.php",
+		"blockVersion": 3
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"data": {
+				"is_preview": true
+			}
+		}
+	}
+}

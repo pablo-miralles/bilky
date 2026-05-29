@@ -1,0 +1,4 @@
+.plugins-php .wp-list-table.plugins [data-slug="advanced-custom-fields-pro"], .acf-hndle-cog, #toplevel_page_edit-post_type-acf-field-group{
+  display: none;
+}
+

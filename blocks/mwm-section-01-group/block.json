@@ -1,0 +1,30 @@
+{
+	"apiVersion": 3,
+	"name": "acf/mwm-section-01-group",
+	"title": "MWM Section 01 Group",
+	"description": "Grupo de dos secciones tipo section-01",
+	"category": "bilky-blocks",
+	"icon": "columns",
+	"keywords": [
+		"section",
+		"group",
+		"columns",
+		"two sections"
+	],
+	"supports": {
+		"align": false,
+		"jsx": false
+	},
+	"acf": {
+		"renderTemplate": "blocks/mwm-section-01-group/template.php",
+		"blockVersion": 3
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"data": {
+				"is_preview": true
+			}
+		}
+	}
+}

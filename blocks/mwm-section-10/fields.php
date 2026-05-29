@@ -1,0 +1,337 @@
+<?php
+
+if ( function_exists( 'acf_add_local_field_group' ) ) :
+
+	acf_add_local_field_group(
+		array(
+			'key'                   => 'group_mwm_section-10_group',
+			'title'                 => __( 'MWM Section 10', 'bilky' ),
+			'fields'                => array(
+				array(
+					'key'               => 'field_mwm_section-10_group_width',
+					'label'             => __( 'Ancho', 'bilky' ),
+					'name'              => 'width',
+					'type'              => 'select',
+					'instructions'      => __( 'Selecciona el ancho del bloque', 'bilky' ),
+					'required'          => 0,
+					'choices'           => array(
+						'wide'  => __( 'Amplio', 'bilky' ),
+						'narrow' => __( 'Chico', 'bilky' ),
+					),
+					'default_value'     => 'wide',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'ui'                => 1,
+					'ajax'              => 0,
+					'return_format'     => 'value',
+				),
+				array(
+					'key'               => 'field_mwm_section-10_group_card_type',
+					'label'             => __( 'Tipo de card', 'bilky' ),
+					'name'              => 'card_type',
+					'type'              => 'select',
+					'instructions'      => __( 'Selecciona el tipo de card (solo tienen diferencias visuales)', 'bilky' ),
+					'required'          => 0,
+					'choices'           => array(
+						'v1' => __( 'Card v1', 'bilky' ),
+						'v2' => __( 'Card v2', 'bilky' ),
+					),
+					'default_value'     => 'v1',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'ui'                => 1,
+					'ajax'              => 0,
+					'return_format'     => 'value',
+				),
+				array(
+					'key'               => 'field_mwm_section-10_group_cards',
+					'label'             => __( 'Cards', 'bilky' ),
+					'name'              => 'cards',
+					'type'              => 'repeater',
+					'instructions'      => __( 'Añade hasta 3 cards', 'bilky' ),
+					'required'          => 0,
+					'conditional_logic' => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'collapsed'          => 'field_mwm_section-10_group_card_title',
+					'max'                => 3,
+					'layout'             => 'block',
+					'button_label'       => __( 'Añadir Card', 'bilky' ),
+					'sub_fields'         => array(
+						array(
+							'key'               => 'field_mwm_section-10_group_card_show_tag',
+							'label'             => __( 'Mostrar tag', 'bilky' ),
+							'name'              => 'show_tag',
+							'type'              => 'true_false',
+							'instructions'      => __( 'Activa o desactiva el tag', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 0,
+							'ui'                => 1,
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_tag',
+							'label'             => __( 'Tag', 'bilky' ),
+							'name'              => 'tag',
+							'type'              => 'text',
+							'instructions'      => __( 'Tag de la card', 'bilky' ),
+							'required'          => 0,
+							'placeholder'       => __( 'Tag', 'bilky' ),
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_tag',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_show_icon',
+							'label'             => __( 'Mostrar icono', 'bilky' ),
+							'name'              => 'show_icon',
+							'type'              => 'true_false',
+							'instructions'      => __( 'Activa o desactiva el icono', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 1,
+							'ui'                => 1,
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_icon',
+							'label'             => __( 'Icono', 'bilky' ),
+							'name'              => 'icon',
+							'type'              => 'text',
+							'instructions'      => __( 'Nombre del icono de Font Awesome 7 Pro (ej: wifi, headset, refresh, etc.)', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 'wifi',
+							'placeholder'       => 'wifi',
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_icon',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_show_title',
+							'label'             => __( 'Mostrar título', 'bilky' ),
+							'name'              => 'show_title',
+							'type'              => 'true_false',
+							'instructions'      => __( 'Activa o desactiva el título', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 1,
+							'ui'                => 1,
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_title',
+							'label'             => __( 'Título', 'bilky' ),
+							'name'              => 'title',
+							'type'              => 'text',
+							'instructions'      => __( 'Título de la card', 'bilky' ),
+							'required'          => 0,
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_title',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_show_description',
+							'label'             => __( 'Mostrar descripción', 'bilky' ),
+							'name'              => 'show_description',
+							'type'              => 'true_false',
+							'instructions'      => __( 'Activa o desactiva la descripción', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 1,
+							'ui'                => 1,
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_description',
+							'label'             => __( 'Descripción', 'bilky' ),
+							'name'              => 'description',
+							'type'              => 'wysiwyg',
+							'instructions'      => __( 'Descripción de la card', 'bilky' ),
+							'required'          => 0,
+							'tabs'              => 'all',
+							'toolbar'           => 'basic',
+							'media_upload'      => 0,
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_description',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_show_list',
+							'label'             => __( 'Mostrar lista', 'bilky' ),
+							'name'              => 'show_list',
+							'type'              => 'true_false',
+							'instructions'      => __( 'Activa o desactiva la lista de elementos', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 0,
+							'ui'                => 1,
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_list_icon_color',
+							'label'             => __( 'Color de los iconos de la lista', 'bilky' ),
+							'name'              => 'list_icon_color',
+							'type'              => 'select',
+							'instructions'      => __( 'Selecciona el color de los iconos de la lista', 'bilky' ),
+							'required'          => 0,
+							'choices'           => array(
+								'primary'   => __( 'Verde', 'bilky' ),
+								'secondary' => __( 'Azul', 'bilky' ),
+								'terciary'  => __( 'Gris', 'bilky' ),
+							),
+							'default_value'     => 'primary',
+							'allow_null'        => 0,
+							'multiple'          => 0,
+							'ui'                => 1,
+							'ajax'              => 0,
+							'return_format'     => 'value',
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_list',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_list_items',
+							'label'             => __( 'Elementos de la lista', 'bilky' ),
+							'name'              => 'list_items',
+							'type'              => 'repeater',
+							'instructions'      => __( 'Añade los elementos de la lista', 'bilky' ),
+							'required'          => 0,
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_list',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+							'wrapper'           => array(
+								'width' => '',
+								'class' => '',
+								'id'    => '',
+							),
+							'collapsed'          => 'field_mwm_section-10_group_card_list_item_text',
+							'min'                => 1,
+							'max'                => 0,
+							'layout'             => 'block',
+							'button_label'       => __( 'Añadir elemento', 'bilky' ),
+							'sub_fields'         => array(
+								array(
+									'key'        => 'field_mwm_section-10_group_card_list_item_text',
+									'label'      => __( 'Texto', 'bilky' ),
+									'name'       => 'text',
+									'type'       => 'text',
+									'instructions' => __( 'Texto principal del item', 'bilky' ),
+									'required'   => 0,
+								),
+								array(
+									'key'        => 'field_mwm_section-10_group_card_list_item_icon',
+									'label'      => __( 'Icono', 'bilky' ),
+									'name'       => 'icon',
+									'type'       => 'text',
+									'instructions' => __( 'Nombre del icono de Font Awesome 7 Pro (ej: circle-check, check, star, etc.)', 'bilky' ),
+									'required'   => 0,
+									'default_value' => 'circle-check',
+									'placeholder' => 'circle-check',
+								),
+								array(
+									'key'        => 'field_mwm_section-10_group_card_list_item_subtext',
+									'label'      => __( 'Texto secundario', 'bilky' ),
+									'name'       => 'subtext',
+									'type'       => 'text',
+									'instructions' => __( 'Texto secundario que aparece debajo del texto principal', 'bilky' ),
+									'required'   => 0,
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_show_button',
+							'label'             => __( 'Mostrar botón', 'bilky' ),
+							'name'              => 'show_button',
+							'type'              => 'true_false',
+							'instructions'      => __( 'Activa o desactiva el botón inferior', 'bilky' ),
+							'required'          => 0,
+							'default_value'     => 0,
+							'ui'                => 1,
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_button_text',
+							'label'             => __( 'Texto del botón', 'bilky' ),
+							'name'              => 'button_text',
+							'type'              => 'text',
+							'instructions'      => __( 'Texto del botón inferior', 'bilky' ),
+							'required'          => 0,
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_button',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+						array(
+							'key'               => 'field_mwm_section-10_group_card_button_url',
+							'label'             => __( 'URL del botón', 'bilky' ),
+							'name'              => 'button_url',
+							'type'              => 'text',
+							'instructions'      => __( 'URL del botón inferior (si se deja vacío se renderiza como botón)', 'bilky' ),
+							'required'          => 0,
+							'conditional_logic' => array(
+								array(
+									array(
+										'field'    => 'field_mwm_section-10_group_card_show_button',
+										'operator' => '==',
+										'value'    => '1',
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+			'location'              => array(
+				array(
+					array(
+						'param'    => 'block',
+						'operator' => '==',
+						'value'    => 'acf/mwm-section-10',
+					),
+				),
+			),
+			'menu_order'            => 0,
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'top',
+			'instruction_placement' => 'label',
+			'hide_on_screen'        => '',
+		)
+	);
+
+endif;
+

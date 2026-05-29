@@ -1,0 +1,30 @@
+{
+	"apiVersion": 3,
+	"name": "acf/mwm-image-video-automatic-01",
+	"title": "MWM Image Video Automatic 01",
+	"description": "Componente de media con video autoplay de WordPress o imagen",
+	"category": "bilky-blocks",
+	"icon": "video-alt3",
+	"keywords": [
+		"video",
+		"media",
+		"autoplay",
+		"image"
+	],
+	"supports": {
+		"align": false,
+		"jsx": false
+	},
+	"acf": {
+		"renderTemplate": "blocks/mwm-image-video-automatic-01/template.php",
+		"blockVersion": 3
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"data": {
+				"is_preview": true
+			}
+		}
+	}
+}

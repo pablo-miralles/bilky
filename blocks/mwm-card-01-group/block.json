@@ -1,0 +1,29 @@
+{
+	"apiVersion": 3,
+	"name": "acf/mwm-card-01-group",
+	"title": "MWM Card 01 Group",
+	"description": "Sección de cards con video/imagen, icono, título y botón",
+	"category": "bilky-blocks",
+	"icon": "grid-view",
+	"keywords": [
+		"cards",
+		"section",
+		"grid"
+	],
+	"supports": {
+		"align": false,
+		"jsx": false
+	},
+	"acf": {
+		"renderTemplate": "blocks/mwm-card-01-group/template.php",
+		"blockVersion": 3
+	},
+	"example": {
+		"attributes": {
+			"mode": "preview",
+			"data": {
+				"is_preview": true
+			}
+		}
+	}
+}

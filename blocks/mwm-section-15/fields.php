@@ -1,0 +1,162 @@
+<?php
+
+if ( function_exists( 'acf_add_local_field_group' ) ) :
+
+	acf_add_local_field_group(
+		array(
+			'key'                   => 'group_mwm_section_15',
+			'title'                 => 'MWM Section 15',
+			'fields'                => array(
+				array(
+					'key'               => 'field_mwm_section_15_breadcrumb_button_text',
+					'label'             => __( 'Texto del botón breadcrumb', 'bilky' ),
+					'name'              => 'breadcrumb_button_text',
+					'type'              => 'text',
+					'instructions'      => __( 'Texto del botón outline en los breadcrumbs', 'bilky' ),
+					'required'          => 0,
+				),
+				array(
+					'key'               => 'field_mwm_section_15_title',
+					'label'             => __( 'Título', 'bilky' ),
+					'name'              => 'title',
+					'type'              => 'textarea',
+					'instructions'      => __( 'Título principal (se puede dividir en líneas)', 'bilky' ),
+					'required'          => 0,
+					'rows'              => 3,
+				),
+				array(
+					'key'               => 'field_mwm_section_15_text_body',
+					'label'             => __( 'Texto del cuerpo', 'bilky' ),
+					'name'              => 'text_body',
+					'type'              => 'textarea',
+					'instructions'      => __( 'Texto descriptivo que aparece debajo del título', 'bilky' ),
+					'required'          => 0,
+					'rows'              => 4,
+				),
+				array(
+					'key'               => 'field_mwm_section_15_list_icon_color',
+					'label'             => __( 'Color del icono de la lista', 'bilky' ),
+					'name'              => 'list_icon_color',
+					'type'              => 'select',
+					'instructions'      => __( 'Selecciona el color de los iconos de la lista', 'bilky' ),
+					'required'          => 0,
+					'choices'           => array(
+						'green' => __( 'Verde', 'bilky' ),
+						'blue'  => __( 'Azul', 'bilky' ),
+					),
+					'default_value'     => 'green',
+					'allow_null'        => 0,
+					'multiple'          => 0,
+					'ui'                => 1,
+					'ajax'              => 0,
+					'return_format'     => 'value',
+				),
+				array(
+					'key'               => 'field_mwm_section_15_list_items',
+					'label'             => __( 'Elementos de la lista', 'bilky' ),
+					'name'              => 'list_items',
+					'type'              => 'repeater',
+					'instructions'      => __( 'Añade los elementos de la lista', 'bilky' ),
+					'required'          => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'collapsed'         => 'field_mwm_section_15_list_item_text',
+					'min'               => 1,
+					'max'               => 0,
+					'layout'            => 'block',
+					'button_label'      => __( 'Añadir elemento', 'bilky' ),
+					'sub_fields'        => array(
+						array(
+							'key'        => 'field_mwm_section_15_list_item_text',
+							'label'      => __( 'Texto', 'bilky' ),
+							'name'       => 'text',
+							'type'       => 'text',
+							'instructions' => __( 'Texto principal del item', 'bilky' ),
+							'required'   => 0,
+						),
+						array(
+							'key'        => 'field_mwm_section_15_list_item_icon',
+							'label'      => __( 'Icono', 'bilky' ),
+							'name'       => 'icon',
+							'type'       => 'text',
+							'instructions' => __( 'Nombre del icono de Font Awesome 7 Pro (ej: circle-check, check, star, etc.)', 'bilky' ),
+							'required'   => 0,
+							'default_value' => 'circle-check',
+							'placeholder' => 'circle-check',
+						),
+					),
+				),
+				array(
+					'key'               => 'field_mwm_section_15_avatars',
+					'label'             => __( 'Avatares', 'bilky' ),
+					'name'              => 'avatars',
+					'type'              => 'repeater',
+					'instructions'      => __( 'Añade los avatares de usuarios (máximo 4)', 'bilky' ),
+					'required'          => 0,
+					'wrapper'           => array(
+						'width' => '',
+						'class' => '',
+						'id'    => '',
+					),
+					'collapsed'         => '',
+					'min'               => 1,
+					'max'               => 4,
+					'layout'            => 'table',
+					'button_label'      => __( 'Añadir Avatar', 'bilky' ),
+					'sub_fields'        => array(
+						array(
+							'key'           => 'field_mwm_section_15_avatar_image',
+							'label'         => __( 'Imagen', 'bilky' ),
+							'name'          => 'image',
+							'type'          => 'image',
+							'instructions'  => '',
+							'required'      => 0,
+							'return_format' => 'ID',
+							'preview_size'  => 'thumbnail',
+							'library'       => 'all',
+						),
+					),
+				),
+				array(
+					'key'               => 'field_mwm_section_15_users_text',
+					'label'             => __( 'Texto de usuarios', 'bilky' ),
+					'name'              => 'users_text',
+					'type'              => 'textarea',
+					'instructions'      => __( 'Texto que aparece junto a los avatares (se puede dividir en líneas)', 'bilky' ),
+					'required'          => 0,
+					'rows'              => 3,
+					'default_value'     => '+ 350.000 usuarios',
+				),
+				array(
+					'key'               => 'field_mwm_section_15_form_shortcode',
+					'label'             => __( 'Shortcode del formulario', 'bilky' ),
+					'name'              => 'form_shortcode',
+					'type'              => 'text',
+					'instructions'      => __( 'Ingresa el shortcode del formulario (ej: [contact-form-7 id="123"])', 'bilky' ),
+					'required'          => 0,
+					'placeholder'       => __( '[contact-form-7 id="123"]', 'bilky' ),
+				),
+			),
+			'location'              => array(
+				array(
+					array(
+						'param'    => 'block',
+						'operator' => '==',
+						'value'    => 'acf/mwm-section-15',
+					),
+				),
+			),
+			'menu_order'            => 0,
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'top',
+			'instruction_placement' => 'label',
+			'hide_on_screen'        => '',
+		)
+	);
+
+endif;
+
